@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { prefersReducedMotion } from "@/lib/motion";
+import { gsap, prefersReducedMotion, onAppReady } from "@/lib/motion";
 
 /*
  * A contour-line sculpture.
@@ -12,7 +12,7 @@ import { prefersReducedMotion } from "@/lib/motion";
  * 2D rasteriser handles comfortably, and it costs no dependency.
  */
 
-const LINES = 42;
+const LINES = 48;
 /** Horizontal sampling. Lower = smoother curves, more points per frame. */
 const PX_PER_STEP = 9;
 const DPR_CAP = 2;
@@ -111,9 +111,13 @@ export function HeroVisual() {
         }
 
         // Rows crossing the bulge are brighter; the crown picks up the accent.
+        // A slow band of light travels down the stack, so the form reads as
+        // lit rather than merely drawn.
         const accented = centreFall > 0.62;
+        const sweep = 0.5 + 0.5 * Math.sin(t * 0.55 - rowT * 5.2);
         ctx.strokeStyle = accented ? accent : fg;
-        ctx.globalAlpha = (accented ? 0.1 : 0.055) + centreFall * (accented ? 0.15 : 0.1);
+        ctx.globalAlpha =
+          ((accented ? 0.1 : 0.055) + centreFall * (accented ? 0.15 : 0.1)) * (0.72 + sweep * 0.7);
         ctx.stroke();
       }
 
@@ -161,6 +165,34 @@ export function HeroVisual() {
     resize();
     draw();
 
+    // Rises out of the dark once the loader hands off. The target opacity is
+    // read from the stylesheet (it differs between phone and desktop), and the
+    // inline value is cleared afterwards so the classes stay in charge.
+    let intro: gsap.core.Tween | null = null;
+    let cancelled = false;
+    if (!reduced) {
+      const target = parseFloat(getComputedStyle(host).opacity) || 1;
+      intro = gsap.fromTo(
+        host,
+        { opacity: 0 },
+        {
+          opacity: target,
+          duration: 2.6,
+          ease: "power2.out",
+          paused: true,
+          clearProps: "opacity",
+        },
+      );
+      onAppReady(() => {
+        if (!cancelled) intro?.play();
+      });
+    }
+    const dispose = () => {
+      cancelled = true;
+      intro?.kill();
+      host.style.removeProperty("opacity");
+    };
+
     // Static single frame on reduced motion and on phones — still a composed
     // image, but nothing keeps running.
     if (reduced || !wide) {
@@ -169,7 +201,10 @@ export function HeroVisual() {
         draw();
       });
       ro.observe(host);
-      return () => ro.disconnect();
+      return () => {
+        dispose();
+        ro.disconnect();
+      };
     }
 
     const io = new IntersectionObserver(
@@ -195,6 +230,7 @@ export function HeroVisual() {
     start();
 
     return () => {
+      dispose();
       stop();
       io.disconnect();
       ro.disconnect();

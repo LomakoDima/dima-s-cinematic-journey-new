@@ -55,7 +55,7 @@ export function FutureSection() {
   return (
     <section ref={root} id="future" className="py-28 md:py-40">
       <div className="px-5 md:px-10">
-        <SectionLabel index="07" title="Next" />
+        <SectionLabel index="05" title="Next" />
         <h2 className="display-xl mt-14">WHAT&apos;S NEXT?</h2>
       </div>
 

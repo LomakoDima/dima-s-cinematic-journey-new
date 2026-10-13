@@ -11,7 +11,7 @@ export function JourneyTimeline() {
 
   // The line draw, per-chapter entrances, and the current-chapter dim/bright
   // scrub. No new pin — the page already has three; this reuses the same
-  // scrub pattern already used in Gallery.tsx / PersonalitySection.tsx.
+  // scrub pattern already used in PersonalitySection.tsx.
   useEffect(() => {
     const el = root.current;
     if (!el || prefersReducedMotion()) return;

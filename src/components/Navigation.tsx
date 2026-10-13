@@ -2,18 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { Magnetic } from "./Magnetic";
 
 /*
- * Nine links do not fit a 375px viewport, so the secondary ones are revealed
- * progressively. About / Work / Contact are the three that always show.
+ * Eight links do not fit a 375px viewport, so the secondary ones are
+ * revealed progressively. About / Work / Contact are the three that always
+ * show. "AI" is intentionally omitted — AISection isn't mounted right now
+ * (see routes/index.tsx), so this would otherwise be a dead link.
  */
 const LINKS = [
   { label: "About", href: "#about", show: "" },
   { label: "Personality", href: "#personality", show: "hidden sm:block" },
   { label: "Journey", href: "#journey", show: "hidden sm:block" },
   { label: "Work", href: "#work", show: "" },
-  { label: "Holiday", href: "#holiday", show: "hidden md:block" },
-  { label: "Gallery", href: "#gallery", show: "hidden md:block" },
   { label: "Future", href: "#future", show: "hidden md:block" },
-  { label: "AI", href: "#ai", show: "hidden md:block" },
   { label: "Contact", href: "#contact", show: "" },
 ];
 

@@ -86,6 +86,9 @@ export function Loader() {
 
     let cancelled = false;
     const hardCap = window.setTimeout(() => {
+      // The loader unmounts below, so the pending exit timeline must not fire
+      // against refs that are about to be null.
+      cancelled = true;
       finish();
       setVisible(false);
     }, HARD_CAP);

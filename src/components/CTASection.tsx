@@ -90,7 +90,7 @@ export function CTASection() {
         }}
       />
 
-      <SectionLabel index="09" title="Let's Build" />
+      <SectionLabel index="06" title="Let's Build" />
 
       <div data-cta-head className="mt-14">
         <h2 className="display-xl">
